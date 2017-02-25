@@ -1,0 +1,12 @@
+# generated files
+test.log
+*.class
+
+# IntelliJ
+out/
+*.iml
+.idea/
+
+# Gradle
+build/
+.gradle/
