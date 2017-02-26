@@ -56,7 +56,7 @@ public class AsyncFileChannelAppender implements Appender {
     public void close() throws Exception {
         phaser.arriveAndAwaitAdvance();
         try {
-            fileChannel.force(false);
+            fileChannel.force(true);
         } finally {
             fileChannel.close();
         }
