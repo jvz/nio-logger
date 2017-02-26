@@ -18,7 +18,7 @@ package org.musigma.logging;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
-import java.time.Instant;
+import java.util.Date;
 
 /**
  *
@@ -34,7 +34,7 @@ public class SimpleLayout implements Layout {
     @Override
     public ByteBuffer encode(LogEvent event) {
         CharSequence message = event.getMessage();
-        String timestamp = Instant.ofEpochMilli(event.getTimestamp()).toString();
+        String timestamp = new Date(event.getTimestamp()).toString();
         // "[" + timestamp + "] " + message + "\n"
         CharBuffer buf = CharBuffer.allocate(1 + timestamp.length() + 2 + message.length() + 1);
         buf.put('[').put(timestamp).put(']').put(' ');
