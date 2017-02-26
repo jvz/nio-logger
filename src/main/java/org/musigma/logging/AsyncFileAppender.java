@@ -27,14 +27,14 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  *
  */
-public class FileAppender implements Appender {
+public class AsyncFileAppender implements Appender {
 
     private final AsynchronousFileChannel fileChannel;
     private final Layout layout;
     private final AtomicLong nextWritablePosition = new AtomicLong();
     private final Phaser phaser = new Phaser(1); // self is interested in phases to close when done
 
-    public FileAppender(Path logFile, Layout layout) {
+    public AsyncFileAppender(Path logFile, Layout layout) {
         try {
             this.fileChannel = AsynchronousFileChannel.open(logFile, StandardOpenOption.CREATE,
                 StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
