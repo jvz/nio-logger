@@ -17,6 +17,7 @@ package org.musigma.logging.jmh;
 
 import org.musigma.logging.Layout;
 import org.musigma.logging.LogEvent;
+import org.musigma.logging.SimpleAsciiLayout;
 import org.musigma.logging.SimpleLayout;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Scope;
@@ -35,7 +36,8 @@ import java.nio.charset.StandardCharsets;
 @State(Scope.Benchmark)
 public class LayoutBenchmark {
 
-    private Layout layout = new SimpleLayout(StandardCharsets.ISO_8859_1);
+    private Layout simpleLayout = new SimpleLayout(StandardCharsets.ISO_8859_1);
+    private Layout asciiLayout = new SimpleAsciiLayout();
     private LogEvent event = new LogEvent("Test message", System.currentTimeMillis());
 
     @State(Scope.Thread)
@@ -44,13 +46,24 @@ public class LayoutBenchmark {
     }
 
     @Benchmark
-    public ByteBuffer encode1() {
-        return layout.encode(event);
+    public ByteBuffer simpleLayoutEncode1() {
+        return simpleLayout.encode(event);
     }
 
     @Benchmark
-    public void encode2(ReusableBuffer buffer) {
-        layout.encode(event, buffer.buf);
+    public void simpleLayoutEncode2(ReusableBuffer buffer) {
+        simpleLayout.encode(event, buffer.buf);
+        buffer.buf.clear();
+    }
+
+    @Benchmark
+    public ByteBuffer asciiLayoutEncode1() {
+        return asciiLayout.encode(event);
+    }
+
+    @Benchmark
+    public void asciiLayoutEncode2(ReusableBuffer buffer) {
+        asciiLayout.encode(event, buffer.buf);
         buffer.buf.clear();
     }
 
