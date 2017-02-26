@@ -22,6 +22,7 @@ import org.musigma.logging.RandomAccessFileAppender;
 import org.musigma.logging.SimpleLayout;
 import org.musigma.logging.SimpleLogger;
 import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
@@ -44,7 +45,7 @@ public class RandomAccessFileAppenderBenchmark {
     private Logger logger;
     private Appender appender;
 
-    @Setup
+    @Setup(Level.Iteration)
     public void setup() {
         Path logFile = Paths.get("target", "test.log");
         Layout layout = new SimpleLayout(StandardCharsets.ISO_8859_1);
@@ -52,7 +53,7 @@ public class RandomAccessFileAppenderBenchmark {
         logger = new SimpleLogger(appender);
     }
 
-    @TearDown
+    @TearDown(Level.Iteration)
     public void teardown() throws Exception {
         appender.close();
     }
