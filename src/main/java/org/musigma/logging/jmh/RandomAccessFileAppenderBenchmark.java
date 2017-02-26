@@ -64,7 +64,7 @@ public class RandomAccessFileAppenderBenchmark {
 
     public static void main(String[] args) throws RunnerException {
         Options options = new OptionsBuilder()
-            .include(RandomAccessFileAppenderBenchmark.class.getSimpleName())
+            .include(RandomAccessFileAppenderBenchmark.class.getName())
             .warmupIterations(10)
             .measurementIterations(10)
             .forks(1)

@@ -64,7 +64,7 @@ public class AsyncFileChannelAppenderBenchmark {
 
     public static void main(String[] args) throws RunnerException {
         Options options = new OptionsBuilder()
-            .include(AsyncFileChannelAppenderBenchmark.class.getSimpleName())
+            .include(AsyncFileChannelAppenderBenchmark.class.getName())
             .warmupIterations(10)
             .measurementIterations(10)
             .forks(1)

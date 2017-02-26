@@ -45,7 +45,7 @@ public class TimestampBenchmark {
 
     public static void main(String[] args) throws RunnerException {
         new Runner(new OptionsBuilder()
-            .include(TimestampBenchmark.class.getSimpleName())
+            .include(TimestampBenchmark.class.getName())
             .warmupIterations(10)
             .measurementIterations(10)
             .forks(1)
