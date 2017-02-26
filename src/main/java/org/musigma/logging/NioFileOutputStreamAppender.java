@@ -32,6 +32,9 @@ public class NioFileOutputStreamAppender implements Appender {
 
     private final OutputStream out;
     private final Layout layout;
+    // it's faster to use bulk write(byte[]) methods than to loop from our ByteBuffer
+    private final byte[] writeBuffer = new byte[8192];
+    private final ByteBuffer buf = ByteBuffer.allocateDirect(8192);
 
     public NioFileOutputStreamAppender(Path logFile, Layout layout) {
         try {
@@ -46,13 +49,14 @@ public class NioFileOutputStreamAppender implements Appender {
 
     @Override
     public synchronized void append(LogEvent event) {
-        write(layout.encode(event));
-    }
-
-    private void write(ByteBuffer buf) {
-        byte[] b = buf.array();
+        buf.clear();
+        layout.encode(event, buf);
+        buf.flip();
+        // TODO: create a sort of BufferedOutputStream that takes write(ByteBuffer) methods
+        int length = buf.remaining();
+        buf.get(writeBuffer, 0, length);
         try {
-            out.write(b);
+            out.write(writeBuffer, 0, length);
         } catch (IOException e) {
             e.printStackTrace();
         }
