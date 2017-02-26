@@ -7,6 +7,5 @@ out/
 *.iml
 .idea/
 
-# Gradle
-build/
-.gradle/
+# Maven
+target/
