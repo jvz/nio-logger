@@ -16,10 +16,10 @@
 package org.musigma.logging.jmh;
 
 import org.musigma.logging.Appender;
-import org.musigma.logging.NioFileOutputStreamAppender;
 import org.musigma.logging.Layout;
 import org.musigma.logging.Logger;
-import org.musigma.logging.SimpleLayout;
+import org.musigma.logging.NioFileOutputStreamAppender;
+import org.musigma.logging.SimpleAsciiLayout;
 import org.musigma.logging.SimpleLogger;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Level;
@@ -32,7 +32,6 @@ import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -48,7 +47,8 @@ public class NioFileOutputStreamAppenderBenchmark {
     @Setup(Level.Iteration)
     public void setup() {
         Path logFile = Paths.get("target", "test.log");
-        Layout layout = new SimpleLayout(StandardCharsets.ISO_8859_1);
+//        Layout layout = new SimpleLayout(StandardCharsets.ISO_8859_1);
+        Layout layout = new SimpleAsciiLayout();
         appender = new NioFileOutputStreamAppender(logFile, layout);
         logger = new SimpleLogger(appender);
     }
