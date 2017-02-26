@@ -69,28 +69,30 @@ public class SimpleLayout implements Layout {
         }
 
         CharBuffer buf = bufferLocal.get();
-        buf.clear();
         // encode CharSeq in CharBuffer-sized chunks (too bad for those poor surrogate pairs)
         int cap = buf.capacity();
         int fullChunks = Math.floorDiv(seq.length(), cap);
         // first, we'll handle all the full-sized chunks
         for (int i = 0; i < fullChunks; i++) {
             int offset = i * cap;
+            buf.clear();
             for (int j = 0; j < cap; j++) {
                 buf.put(seq.charAt(j + offset));
             }
+            buf.flip();
             // TODO: same note as above; we could drain the destination buffer and continue writing again
             if (encoder.encode(buf, dst, false).isOverflow()) {
                 throw new UnsupportedOperationException(new BufferOverflowException());
             }
-            buf.clear();
         }
         // encode last chunk
         int start = fullChunks * cap;
         int end = seq.length();
+        buf.clear();
         for (int i = start; i < end; i++) {
             buf.put(seq.charAt(i));
         }
+        buf.flip();
         if (encoder.encode(buf, dst, true).isOverflow()) {
             throw new BufferOverflowException();
         }
