@@ -13,7 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.musigma.logging;
+package org.musigma.logging.appender;
+
+import org.musigma.logging.layout.Layout;
+import org.musigma.logging.impl.LogEvent;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;

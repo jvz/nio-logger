@@ -13,11 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.musigma.logging;
+package org.musigma.logging.layout;
+
+import org.musigma.logging.impl.LogEvent;
+
+import java.nio.ByteBuffer;
 
 /**
- *
+ * A Layout encodes a LogEvent into a ByteBuffer.
  */
-public interface Appender extends AutoCloseable {
-    void append(LogEvent event);
+public interface Layout {
+    ByteBuffer encode(LogEvent event);
+
+    // FIXME: this needs to use something like ByteBufferDestination from log4j
+    void encode(LogEvent event, ByteBuffer dst);
 }

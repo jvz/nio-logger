@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.musigma.logging;
+package org.musigma.logging.appender;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousFileChannel;

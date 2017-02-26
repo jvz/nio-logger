@@ -13,22 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.musigma.logging;
+package org.musigma.logging.impl;
 
 /**
- *
+ * Any time a log message is created through a Logger, a LogEvent is created. This event is then handled by an Appender
+ * which can encode the event via a Layout before writing to some underlying storage or network device.
  */
-public class SimpleLogger implements Logger {
+public class LogEvent {
+    private final CharSequence message;
+    private final long timestamp;
 
-    private final Appender appender;
-
-    public SimpleLogger(Appender appender) {
-        this.appender = appender;
+    public LogEvent(CharSequence message, long timestamp) {
+        this.message = message;
+        this.timestamp = timestamp;
     }
 
-    @Override
-    public void log(CharSequence msg) {
-        appender.append(new LogEvent(msg, System.currentTimeMillis()));
+    public CharSequence getMessage() {
+        return message;
     }
 
+    public long getTimestamp() {
+        return timestamp;
+    }
 }

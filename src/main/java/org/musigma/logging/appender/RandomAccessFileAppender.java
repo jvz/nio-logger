@@ -13,40 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.musigma.logging;
+package org.musigma.logging.appender;
 
+import org.musigma.logging.layout.Layout;
+import org.musigma.logging.impl.LogEvent;
+
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.io.UncheckedIOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 
-import static java.nio.file.StandardOpenOption.CREATE;
-import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
-import static java.nio.file.StandardOpenOption.WRITE;
-
 /**
- * Simple appender using {@link FileChannel}.
+ * Simple appender using {@link RandomAccessFile}.
  */
-public class FileChannelAppender implements Appender {
+public class RandomAccessFileAppender implements Appender {
 
-    private final FileChannel fileChannel;
+    private final RandomAccessFile file;
     private final Layout layout;
 
-    public FileChannelAppender(Path logFile, Layout layout) {
+    public RandomAccessFileAppender(Path logFile, Layout layout) {
         try {
-            this.fileChannel = FileChannel.open(logFile, WRITE, CREATE, TRUNCATE_EXISTING);
+            this.file = new RandomAccessFile(logFile.toFile(), "rw");
             this.layout = layout;
-        } catch (IOException e) {
+        } catch (FileNotFoundException e) {
             throw new UncheckedIOException(e);
         }
     }
 
     @Override
     public synchronized void append(LogEvent event) {
-        ByteBuffer buf = layout.encode(event);
+        write(layout.encode(event));
+    }
+
+    private void write(ByteBuffer buf) {
+        byte[] b = buf.array();
         try {
-            fileChannel.write(buf);
+            file.write(b);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -54,10 +58,7 @@ public class FileChannelAppender implements Appender {
 
     @Override
     public void close() throws Exception {
-        try {
-            fileChannel.force(true);
-        } finally {
-            fileChannel.close();
-        }
+        file.getChannel().force(false);
+        file.close();
     }
 }

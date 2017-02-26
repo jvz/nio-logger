@@ -13,25 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.musigma.logging;
+package org.musigma.logging.impl;
+
+import org.musigma.logging.Logger;
+import org.musigma.logging.appender.Appender;
 
 /**
- *
+ * Simple logger that writes messages into an {@link Appender}.
  */
-public class LogEvent {
-    private final CharSequence message;
-    private final long timestamp;
+public class SimpleLogger implements Logger {
 
-    public LogEvent(CharSequence message, long timestamp) {
-        this.message = message;
-        this.timestamp = timestamp;
+    private final Appender appender;
+
+    public SimpleLogger(Appender appender) {
+        this.appender = appender;
     }
 
-    public CharSequence getMessage() {
-        return message;
+    @Override
+    public void log(CharSequence msg) {
+        appender.append(new LogEvent(msg, System.currentTimeMillis()));
     }
 
-    public long getTimestamp() {
-        return timestamp;
-    }
 }

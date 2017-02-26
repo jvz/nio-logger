@@ -13,16 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.musigma.logging;
+package org.musigma.logging.appender;
 
-import java.nio.ByteBuffer;
+import org.musigma.logging.impl.LogEvent;
 
 /**
- * A Layout encodes a LogEvent into a ByteBuffer.
+ * An appender is used to append a log event to something. Generally, these will encode the log event into a
+ * ByteBuffer which is written to something.
  */
-public interface Layout {
-    ByteBuffer encode(LogEvent event);
-
-    // FIXME: this needs to use something like ByteBufferDestination from log4j
-    void encode(LogEvent event, ByteBuffer dst);
+public interface Appender extends AutoCloseable {
+    void append(LogEvent event);
 }

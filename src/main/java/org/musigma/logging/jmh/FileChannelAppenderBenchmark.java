@@ -15,12 +15,12 @@
  */
 package org.musigma.logging.jmh;
 
-import org.musigma.logging.Appender;
-import org.musigma.logging.FileChannelAppender;
-import org.musigma.logging.Layout;
+import org.musigma.logging.appender.Appender;
+import org.musigma.logging.appender.FileChannelAppender;
+import org.musigma.logging.layout.Layout;
 import org.musigma.logging.Logger;
-import org.musigma.logging.SimpleAsciiLayout;
-import org.musigma.logging.SimpleLogger;
+import org.musigma.logging.layout.SimpleAsciiLayout;
+import org.musigma.logging.impl.SimpleLogger;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Scope;

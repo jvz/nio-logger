@@ -13,31 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.musigma.logging;
+package org.musigma.logging.appender;
+
+import org.musigma.logging.layout.Layout;
+import org.musigma.logging.impl.LogEvent;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.AsynchronousFileChannel;
+import java.nio.channels.FileChannel;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-import java.util.concurrent.Phaser;
-import java.util.concurrent.atomic.AtomicLong;
+
+import static java.nio.file.StandardOpenOption.*;
 
 /**
- * Appender based on {@link AsynchronousFileChannel}.
+ * Simple appender using {@link FileChannel}.
  */
-public class AsyncFileChannelAppender implements Appender {
+public class FileChannelAppender implements Appender {
 
-    private final AsynchronousFileChannel fileChannel;
+    private final FileChannel fileChannel;
     private final Layout layout;
-    private final AtomicLong nextWritablePosition = new AtomicLong();
-    private final Phaser phaser = new Phaser(1); // self is interested in phases to close when done
+//    private final ByteBuffer buf = ByteBuffer.allocateDirect(8192);
 
-    public AsyncFileChannelAppender(Path logFile, Layout layout) {
+    public FileChannelAppender(Path logFile, Layout layout) {
         try {
-            this.fileChannel = AsynchronousFileChannel.open(logFile, StandardOpenOption.CREATE,
-                StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+            this.fileChannel = FileChannel.open(logFile, WRITE, CREATE, TRUNCATE_EXISTING);
             this.layout = layout;
         } catch (IOException e) {
             throw new UncheckedIOException(e);
@@ -45,21 +45,23 @@ public class AsyncFileChannelAppender implements Appender {
     }
 
     @Override
-    public void append(LogEvent event) {
-        ByteBuffer src = layout.encode(event);
-        int remaining = src.remaining();
-        long pos = nextWritablePosition.getAndAdd(remaining);
-        new FileTransferAction(phaser, src, fileChannel, pos).run();
+    public synchronized void append(LogEvent event) {
+        ByteBuffer buf = layout.encode(event);
+//        buf.clear();
+//        layout.encode(event, buf);
+        try {
+            fileChannel.write(buf);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void close() throws Exception {
-        phaser.arriveAndAwaitAdvance();
         try {
             fileChannel.force(true);
         } finally {
             fileChannel.close();
         }
     }
-
 }

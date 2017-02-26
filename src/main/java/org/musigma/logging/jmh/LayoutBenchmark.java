@@ -15,10 +15,10 @@
  */
 package org.musigma.logging.jmh;
 
-import org.musigma.logging.Layout;
-import org.musigma.logging.LogEvent;
-import org.musigma.logging.SimpleAsciiLayout;
-import org.musigma.logging.SimpleLayout;
+import org.musigma.logging.layout.Layout;
+import org.musigma.logging.impl.LogEvent;
+import org.musigma.logging.layout.SimpleAsciiLayout;
+import org.musigma.logging.layout.SimpleLayout;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.State;
