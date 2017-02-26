@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.musigma.logging;
-
-import java.nio.ByteBuffer;
+package org.musigma.logging.util;
 
 /**
- * A Layout encodes a LogEvent into a ByteBuffer.
+ * Simplified {@link CharSequence} interface. Useful for providing a CharSequence-like view to in-memory data without
+ * needing to copy to a StringBuilder or similar.
+ *
+ * This class may not be all that useful if StringBuilders are reused similarly to log4j-api and StringBuilderFormattable.
  */
-public interface Layout {
-    ByteBuffer encode(LogEvent event);
+public interface CharSeq {
+    int length();
 
-    // FIXME: this needs to use something like ByteBufferDestination from log4j
-    void encode(LogEvent event, ByteBuffer dst);
+    char charAt(int i) throws IndexOutOfBoundsException;
 }
