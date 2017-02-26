@@ -15,6 +15,7 @@
  */
 package org.musigma.logging;
 
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
@@ -25,7 +26,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
 /**
- * Simple appender using {@link Files#newOutputStream(Path, OpenOption...)}.
+ * Simple appender using {@link Files#newOutputStream(Path, OpenOption...)} and {@link BufferedOutputStream}.
  */
 public class NioFileOutputStreamAppender implements Appender {
 
@@ -34,9 +35,9 @@ public class NioFileOutputStreamAppender implements Appender {
 
     public NioFileOutputStreamAppender(Path logFile, Layout layout) {
         try {
-            this.out =
+            this.out = new BufferedOutputStream(
                 Files.newOutputStream(logFile, StandardOpenOption.CREATE, StandardOpenOption.WRITE,
-                    StandardOpenOption.TRUNCATE_EXISTING);
+                    StandardOpenOption.TRUNCATE_EXISTING));
             this.layout = layout;
         } catch (IOException e) {
             throw new UncheckedIOException(e);
@@ -59,6 +60,7 @@ public class NioFileOutputStreamAppender implements Appender {
 
     @Override
     public void close() throws Exception {
+        out.flush();
         out.close();
     }
 }
