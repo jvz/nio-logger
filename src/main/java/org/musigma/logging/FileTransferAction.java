@@ -15,12 +15,9 @@
  */
 package org.musigma.logging;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousFileChannel;
 import java.nio.channels.CompletionHandler;
-import java.nio.channels.FileLock;
 import java.util.concurrent.Phaser;
 
 /**
@@ -32,7 +29,6 @@ class FileTransferAction implements Runnable, CompletionHandler<Integer, Void> {
     private final AsynchronousFileChannel dst;
 
     private long pos;
-    private FileLock lock;
 
     FileTransferAction(Phaser phaser, ByteBuffer src, AsynchronousFileChannel dst, long pos) {
         this.phaser = phaser;
@@ -44,12 +40,7 @@ class FileTransferAction implements Runnable, CompletionHandler<Integer, Void> {
     @Override
     public void run() {
         phaser.register();
-        dst.lock(pos, src.remaining(), false, this, LockHandler.INSTANCE);
-    }
-
-    private FileTransferAction lock(FileLock lock) {
-        this.lock = lock;
-        return this;
+        transfer();
     }
 
     private void transfer() {
@@ -62,15 +53,7 @@ class FileTransferAction implements Runnable, CompletionHandler<Integer, Void> {
     }
 
     private void unlock() {
-        try {
-            if (lock != null && lock.isValid()) {
-                lock.release();
-            }
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        } finally {
-            phaser.arriveAndDeregister();
-        }
+        phaser.arriveAndDeregister();
     }
 
     @Override
@@ -85,18 +68,4 @@ class FileTransferAction implements Runnable, CompletionHandler<Integer, Void> {
         unlock();
     }
 
-    private enum LockHandler implements CompletionHandler<FileLock, FileTransferAction> {
-        INSTANCE;
-
-        @Override
-        public void completed(FileLock lock, FileTransferAction channel) {
-            channel.lock(lock).transfer();
-        }
-
-        @Override
-        public void failed(Throwable exc, FileTransferAction channel) {
-            exc.printStackTrace();
-            channel.unlock();
-        }
-    }
 }
