@@ -31,6 +31,8 @@ public class FileOutputStreamAppender implements Appender {
 
     private final OutputStream out;
     private final Layout layout;
+    private final byte[] writeBuffer = new byte[8192];
+    private final ByteBuffer buf = ByteBuffer.allocateDirect(8192);
 
     public FileOutputStreamAppender(Path logFile, Layout layout) {
         try {
@@ -43,13 +45,13 @@ public class FileOutputStreamAppender implements Appender {
 
     @Override
     public synchronized void append(LogEvent event) {
-        write(layout.encode(event));
-    }
-
-    private void write(ByteBuffer buf) {
-        byte[] b = buf.array();
+        buf.clear();
+        layout.encode(event, buf);
+        buf.flip();
+        int length = buf.remaining();
+        buf.get(writeBuffer, 0, length);
         try {
-            out.write(b);
+            out.write(writeBuffer, 0, length);
         } catch (IOException e) {
             e.printStackTrace();
         }
