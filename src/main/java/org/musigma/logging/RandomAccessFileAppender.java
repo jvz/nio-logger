@@ -55,6 +55,7 @@ public class RandomAccessFileAppender implements Appender {
 
     @Override
     public void close() throws Exception {
+        file.getChannel().force(false);
         file.close();
     }
 }
