@@ -5,4 +5,4 @@ though most API usage within is compatible with Java 7.
 This uses Maven and JMH. To run the benchmarks:
 
     mvn package
-    java -jar target/benchmarks.jar org.musigma.logging.jmh.FileBenchmarks
+    java -cp target/benchmarks.jar org.musigma.logging.jmh.FileBenchmarks
