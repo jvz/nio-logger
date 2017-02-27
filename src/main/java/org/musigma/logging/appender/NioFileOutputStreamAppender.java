@@ -66,8 +66,13 @@ public class NioFileOutputStreamAppender implements Appender {
     }
 
     @Override
-    public void close() throws Exception {
+    public synchronized void flush() throws IOException {
         out.flush();
+    }
+
+    @Override
+    public void close() throws Exception {
+        flush();
         out.close();
     }
 }

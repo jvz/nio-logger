@@ -17,6 +17,7 @@ package org.musigma.logging.appender;
 
 import org.musigma.logging.impl.LogEvent;
 
+import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -44,6 +45,11 @@ public class AsyncAppender implements Appender {
             e.printStackTrace();
             Thread.currentThread().interrupt();
         }
+    }
+
+    @Override
+    public void flush() throws IOException {
+        // nothing to do
     }
 
     @Override

@@ -56,13 +56,17 @@ public class AsyncFileChannelAppender implements Appender {
     }
 
     @Override
+    public void flush() throws IOException {
+        fileChannel.force(true);
+    }
+
+    @Override
     public void close() throws Exception {
         phaser.arriveAndAwaitAdvance();
         try {
-            fileChannel.force(true);
+            flush();
         } finally {
             fileChannel.close();
         }
     }
-
 }

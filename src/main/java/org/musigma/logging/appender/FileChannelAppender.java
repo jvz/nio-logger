@@ -57,9 +57,14 @@ public class FileChannelAppender implements Appender {
     }
 
     @Override
+    public synchronized void flush() throws IOException {
+        fileChannel.force(true);
+    }
+
+    @Override
     public void close() throws Exception {
         try {
-            fileChannel.force(true);
+            flush();
         } finally {
             fileChannel.close();
         }

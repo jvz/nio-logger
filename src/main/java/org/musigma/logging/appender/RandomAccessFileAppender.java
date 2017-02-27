@@ -57,8 +57,13 @@ public class RandomAccessFileAppender implements Appender {
     }
 
     @Override
+    public synchronized void flush() throws IOException {
+        file.getChannel().force(true);
+    }
+
+    @Override
     public void close() throws Exception {
-        file.getChannel().force(false);
+        flush();
         file.close();
     }
 }
