@@ -15,13 +15,19 @@
  */
 package org.musigma.logging.impl;
 
+import org.musigma.logging.util.Formattable;
+
+import java.util.Date;
+
 /**
  * Any time a log message is created through a Logger, a LogEvent is created. This event is then handled by an Appender
  * which can encode the event via a Layout before writing to some underlying storage or network device.
  */
-public class LogEvent {
+public class LogEvent implements Formattable {
     private final CharSequence message;
     private final long timestamp;
+    // FIXME: is this even valid? we're not using it yet to be able to say
+    private final ThreadLocal<StringBuilder> builderLocal = ThreadLocal.withInitial(StringBuilder::new);
 
     public LogEvent(CharSequence message, long timestamp) {
         this.message = message;
@@ -34,5 +40,24 @@ public class LogEvent {
 
     public long getTimestamp() {
         return timestamp;
+    }
+
+    @Override
+    public CharSequence format() {
+        String datetime = new Date(timestamp).toString();
+        StringBuilder sb = builderLocal.get();
+        sb.ensureCapacity(4 + datetime.length() + message.length());
+        sb.append('[').append(datetime).append(']').append(' ').append(message).append('\n');
+        return sb;
+    }
+
+    @Override
+    public void formatTo(StringBuilder buf) {
+        buf.append('[')
+            .append(new Date(timestamp).toString()) // so it's not completely garbage-free; sue me
+            .append(']')
+            .append(' ')
+            .append(message)
+            .append('\n');
     }
 }

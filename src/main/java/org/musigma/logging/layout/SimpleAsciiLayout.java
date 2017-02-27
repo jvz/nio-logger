@@ -68,6 +68,7 @@ public class SimpleAsciiLayout implements Layout {
     public void encode(LogEvent event, Buffered<ByteBuffer> destination) {
         // TODO: reusable StringBuilders (though using ThreadLocal may not work properly with AsyncFileChannelAppender)
         StringBuilder sb = new StringBuilder(32 + event.getMessage().length());
+        // FIXME: while the layout can keep its own StringBuilders, why exactly does the LogEvent use it?
         event.formatTo(sb);
         int position = 0;
         int remaining = sb.length();
