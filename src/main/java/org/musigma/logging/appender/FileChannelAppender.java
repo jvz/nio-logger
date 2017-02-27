@@ -17,6 +17,7 @@ package org.musigma.logging.appender;
 
 import org.musigma.logging.layout.Layout;
 import org.musigma.logging.impl.LogEvent;
+import org.musigma.logging.util.Buffered;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -29,11 +30,11 @@ import static java.nio.file.StandardOpenOption.*;
 /**
  * Simple appender using {@link FileChannel}.
  */
-public class FileChannelAppender implements Appender {
+public class FileChannelAppender implements Appender, Buffered<ByteBuffer> {
 
     private final FileChannel fileChannel;
     private final Layout layout;
-//    private final ByteBuffer buf = ByteBuffer.allocateDirect(8192);
+    private final ByteBuffer buf = ByteBuffer.allocateDirect(8192);
 
     public FileChannelAppender(Path logFile, Layout layout) {
         try {
@@ -46,14 +47,7 @@ public class FileChannelAppender implements Appender {
 
     @Override
     public synchronized void accept(LogEvent event) {
-        ByteBuffer buf = layout.encode(event);
-//        buf.clear();
-//        layout.encode(event, buf);
-        try {
-            fileChannel.write(buf);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        layout.encode(event, this);
     }
 
     @Override
@@ -68,5 +62,22 @@ public class FileChannelAppender implements Appender {
         } finally {
             fileChannel.close();
         }
+    }
+
+    @Override
+    public ByteBuffer buffer() {
+        return buf;
+    }
+
+    @Override
+    public ByteBuffer drain() {
+        try {
+            buf.flip();
+            fileChannel.write(buf);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        buf.clear();
+        return buf;
     }
 }
