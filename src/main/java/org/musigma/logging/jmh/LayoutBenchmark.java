@@ -19,6 +19,7 @@ import org.musigma.logging.layout.Layout;
 import org.musigma.logging.impl.LogEvent;
 import org.musigma.logging.layout.SimpleAsciiLayout;
 import org.musigma.logging.layout.SimpleLayout;
+import org.musigma.logging.util.Buffered;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.State;
@@ -45,6 +46,22 @@ public class LayoutBenchmark {
         private ByteBuffer buf = ByteBuffer.allocateDirect(8192);
     }
 
+    @State(Scope.Thread)
+    public static class ExtensibleBuffer implements Buffered<ByteBuffer> {
+        private ByteBuffer buf = ByteBuffer.allocateDirect(8192);
+
+        @Override
+        public ByteBuffer buffer() {
+            return buf;
+        }
+
+        @Override
+        public ByteBuffer drain() {
+            buf.clear(); // nothing to drain to!
+            return buf;
+        }
+    }
+
     @Benchmark
     public ByteBuffer simpleLayoutEncode1() {
         return simpleLayout.encode(event);
@@ -65,6 +82,12 @@ public class LayoutBenchmark {
     public void asciiLayoutEncode2(ReusableBuffer buffer) {
         asciiLayout.encode(event, buffer.buf);
         buffer.buf.clear();
+    }
+
+    @Benchmark
+    public void asciiLayoutEncode3(ExtensibleBuffer buffer) {
+        asciiLayout.encode(event, buffer);
+        buffer.drain();
     }
 
     public static void main(String[] args) throws RunnerException {
