@@ -78,7 +78,7 @@ public class MemoryMappedFileAppender implements Appender, Buffered<ByteBuffer> 
     }
 
     @Override
-    public synchronized void append(LogEvent event) {
+    public synchronized void accept(LogEvent event) {
         layout.encode(event, this);
     }
 

@@ -45,7 +45,7 @@ public class FileChannelAppender implements Appender {
     }
 
     @Override
-    public synchronized void append(LogEvent event) {
+    public synchronized void accept(LogEvent event) {
         ByteBuffer buf = layout.encode(event);
 //        buf.clear();
 //        layout.encode(event, buf);

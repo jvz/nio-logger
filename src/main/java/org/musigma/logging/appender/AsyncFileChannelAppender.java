@@ -48,7 +48,7 @@ public class AsyncFileChannelAppender implements Appender {
     }
 
     @Override
-    public void append(LogEvent event) {
+    public void accept(LogEvent event) {
         ByteBuffer src = layout.encode(event);
         int remaining = src.remaining();
         long pos = nextWritablePosition.getAndAdd(remaining);

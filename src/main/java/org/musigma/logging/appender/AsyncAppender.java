@@ -38,7 +38,7 @@ public class AsyncAppender implements Appender {
     }
 
     @Override
-    public void append(LogEvent event) {
+    public void accept(LogEvent event) {
         try {
             queue.transfer(event);
         } catch (InterruptedException e) {
@@ -73,7 +73,7 @@ public class AsyncAppender implements Appender {
             while (true) {
                 try {
                     LogEvent event = queue.take();
-                    delegate.append(event);
+                    delegate.accept(event);
                 } catch (InterruptedException ie) {
                     try {
                         delegate.close();

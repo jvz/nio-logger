@@ -18,11 +18,11 @@ package org.musigma.logging.appender;
 import org.musigma.logging.impl.LogEvent;
 
 import java.io.Flushable;
+import java.util.function.Consumer;
 
 /**
  * An appender is used to append a log event to something. Generally, these will encode the log event into a
  * ByteBuffer which is written to something.
  */
-public interface Appender extends AutoCloseable, Flushable {
-    void append(LogEvent event);
+public interface Appender extends Consumer<LogEvent>, AutoCloseable, Flushable {
 }

@@ -51,7 +51,7 @@ public class NioFileOutputStreamAppender implements Appender {
     }
 
     @Override
-    public synchronized void append(LogEvent event) {
+    public synchronized void accept(LogEvent event) {
         buf.clear();
         layout.encode(event, buf);
         buf.flip();

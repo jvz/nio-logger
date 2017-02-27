@@ -31,7 +31,7 @@ public class SimpleLogger implements Logger {
 
     @Override
     public void log(CharSequence msg) {
-        appender.append(new LogEvent(msg, System.currentTimeMillis()));
+        appender.accept(new LogEvent(msg, System.currentTimeMillis()));
     }
 
 }

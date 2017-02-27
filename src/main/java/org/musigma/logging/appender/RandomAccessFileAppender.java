@@ -43,7 +43,7 @@ public class RandomAccessFileAppender implements Appender {
     }
 
     @Override
-    public synchronized void append(LogEvent event) {
+    public synchronized void accept(LogEvent event) {
         write(layout.encode(event));
     }
 
