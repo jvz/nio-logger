@@ -16,6 +16,7 @@
 package org.musigma.logging.layout;
 
 import org.musigma.logging.impl.LogEvent;
+import org.musigma.logging.util.Buffered;
 import org.musigma.logging.util.CharSeq;
 
 import java.nio.BufferOverflowException;
@@ -100,6 +101,11 @@ public class SimpleLayout implements Layout {
         if (encoder.flush(dst).isOverflow()) {
             throw new BufferOverflowException();
         }
+    }
+
+    @Override
+    public void encode(LogEvent event, Buffered<ByteBuffer> destination) {
+        throw new UnsupportedOperationException();
     }
 
     private static class LogEventCharSeq implements CharSeq {

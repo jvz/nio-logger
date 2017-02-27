@@ -16,15 +16,19 @@
 package org.musigma.logging.layout;
 
 import org.musigma.logging.impl.LogEvent;
+import org.musigma.logging.util.Buffered;
 
 import java.nio.ByteBuffer;
 
 /**
  * A Layout encodes a LogEvent into a ByteBuffer.
  */
+// FIXME: should this just use Formattable instead of LogEvent?
 public interface Layout {
     ByteBuffer encode(LogEvent event);
 
     // FIXME: this needs to use something like ByteBufferDestination from log4j
     void encode(LogEvent event, ByteBuffer dst);
+
+    void encode(LogEvent event, Buffered<ByteBuffer> destination);
 }

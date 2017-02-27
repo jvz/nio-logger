@@ -16,6 +16,7 @@
 package org.musigma.logging.layout;
 
 import org.musigma.logging.impl.LogEvent;
+import org.musigma.logging.util.Buffered;
 
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
@@ -61,5 +62,25 @@ public class SimpleAsciiLayout implements Layout {
             dst.put((byte) message.charAt(i));
         }
         dst.put((byte) '\n');
+    }
+
+    @Override
+    public void encode(LogEvent event, Buffered<ByteBuffer> destination) {
+        // TODO: reusable StringBuilders (though using ThreadLocal may not work properly with AsyncFileChannelAppender)
+        StringBuilder sb = new StringBuilder(32 + event.getMessage().length());
+        event.formatTo(sb);
+        int position = 0;
+        int remaining = sb.length();
+        while (remaining > 0) {
+            ByteBuffer buf = destination.buffer();
+            if (remaining > buf.remaining()) {
+                buf = destination.drain();
+            }
+            int chunk = Math.min(remaining, buf.remaining());
+            for (int i = 0; i < chunk; i++) {
+                buf.put((byte) sb.charAt(position++));
+            }
+            remaining -= chunk;
+        }
     }
 }
